@@ -7,16 +7,16 @@ import time
  
 # Settings for connection
 host = "localhost"
-topic= "Mbed"
+topic= "mbed"
 port = 1883
  
 # Callbacks
 def on_connect(mosq, obj, rc):
     print("connect rc: "+str(rc))
-    mqttc.publish("mbed-sample","Python Script Test Message.");
+    mqttc.publish("mbed-sample","Python Script Test Message.")
  
 def on_message(mosq, obj, msg):
-    print( "Received on topic: " + msg.topic + " Message: "+str(msg.payload) + "\n");
+    print( "Received on topic: " + msg.topic + " Message: "+str(msg.payload) + "\n")
  
 def on_subscribe(mosq, obj, mid, granted_qos):
     print("Subscribed OK")
