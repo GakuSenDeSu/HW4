@@ -151,6 +151,7 @@ void getAcc(Arguments *in, Reply *out) {
    float t[3];
    float d[3];
    uint8_t res[6];
+   
    FXOS8700CQ_readRegs(FXOS8700Q_OUT_X_MSB, res, 6);
 
    acc16 = (res[0] << 6) | (res[1] >> 2);
@@ -169,6 +170,7 @@ void getAcc(Arguments *in, Reply *out) {
    t[2] = ((float)acc16) / 4096.0f;
    Num++;
    pc.printf("%1.4f %1.4f %1.4f %d,%d\r\n", t[0], t[1], t[2], 1, Num);
+   wait(1);
    /*
    //Calculate degree
    float R = (float)sqrt((t[0]*t[0]) + (t[1]*t[1]) + (t[2]*t[2]));
@@ -181,6 +183,7 @@ void getAcc(Arguments *in, Reply *out) {
    else{
       printf("%1.4f %1.4f %1.4f %d,%d", t[0], t[1], t[2], 0, Num);
    }*/
+   
 }
 
 void getAddr(Arguments *in, Reply *out) {

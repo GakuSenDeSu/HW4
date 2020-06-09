@@ -99,22 +99,24 @@ time.sleep(3)
 
 # Record acc from PC
 for x in range(0,int(10)):
+    serdev = '/dev/ttyUSB0'
+    s = serial.Serial(serdev, 9600)
     s.write("/getAcc/run\r".encode())
     
+    serdev = '/dev/ttyACM0'
+    s = serial.Serial(serdev, 9600)
     line=s.readline() # Read an echo string from K66F terminated with '\n'
-    print(line)
+    time.sleep(1)
 
-    y1=line.split(",")[0]
-    print(y1)
+    y1=line.decode().strip().split(",")[0]
     
-    y2=line.decode().strip().split(" ")[5]
-    print(y2)
+    y2=line.decode().strip().split(",")[1]
     y2k[x] = float(y2)
 
     mqttc.publish(topic, y1)
 
     time.sleep(1)
-
+print(y2k)
 
 # Num plot
 plt.figure()
