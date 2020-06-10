@@ -9,6 +9,7 @@ mqttc = paho.Client()
 t = np.arange(0,10,1) # time vector; create Fs samples between 0 and 10 sec.
 xk = np.arange(0,10,1)
 y2k = np.arange(0,10,1) # Num
+y2kk = np.arange(0,10,1) # Num
 
 # Settings for connection
 host = "localhost"
@@ -67,9 +68,9 @@ char = s.read(3)
 print("Set DL 0x240.")
 print(char.decode())
 
-s.write("ATID 0x1\r\n".encode())
+s.write("ATID 0x5\r\n".encode())
 char = s.read(3)
-print("Set PAN ID 0x1.")
+print("Set PAN ID 0x5.")
 print(char.decode())
 
 s.write("ATWR\r\n".encode())
@@ -99,6 +100,9 @@ serdev = '/dev/ttyUSB0'
 s = serial.Serial(serdev, 9600)
 s.write("/getAcc/run\r".encode())
 
+print('')
+time.sleep(3)
+
 serdev1 = '/dev/ttyACM0'
 s1 = serial.Serial(serdev1, 9600)
     
@@ -108,7 +112,23 @@ time.sleep(3)
 # Record acc from PC
 y1k=[] #list
 
-for x in range(0,int(10)):
+line=s1.readline() # Read an echo string from K66F terminated with '\n' (to Remote)
+print('')
+line=s1.readline() # Read an echo string from K66F terminated with '\n' (RPC)
+print(line)
+time.sleep(1)
+
+y1=line.decode().strip().split(",")[0]
+y1k.append(y1)
+    
+y2=line.decode().strip().split(",")[1]
+y2k[0] = float(y2)
+print(y2k[0])
+y2kk[0] = 1
+
+mqttc.publish(topic, y1)
+
+for x in range(1,int(10)):
 
     line=s1.readline() # Read an echo string from K66F terminated with '\n' (to Remote)
     print('')
@@ -121,20 +141,22 @@ for x in range(0,int(10)):
     
     y2=line.decode().strip().split(",")[1]
     y2k[x] = float(y2)
-    print(xk[x])
+    print(y2k[x])
+    y2kk[x] = y2k[x] - y2k[x-1]
+    print(y2kk[x])
 
-    mqttc.publish(topic, y1k)
+    mqttc.publish(topic, y1)
 
 print('ALL y1 = ')
 print(y1k)
-print('ALL y2k = ')
+print('ALL y2kk = ')
 print(y2k)
 print('ALL x = ')
-print(x)
+print(xk)
 
 # Num plot
 plt.figure()
-plt.plot(xk, y2k)
+plt.plot(xk, y2kk)
 plt.xlabel("timestamp")
 plt.ylabel("number")
 plt.title("# collected data plot")

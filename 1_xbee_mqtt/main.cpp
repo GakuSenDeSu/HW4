@@ -115,8 +115,8 @@ int main() {
    xbee.printf("ATDL 0x140\r\n");
    reply_messange(xbee_reply, "setting DL : 0x140");
 
-   xbee.printf("ATID 0x1\r\n");
-   reply_messange(xbee_reply, "setting PAN ID : 0x1");
+   xbee.printf("ATID 0x5\r\n");
+   reply_messange(xbee_reply, "setting PAN ID : 0x5");
 
    xbee.printf("ATWR\r\n");
    reply_messange(xbee_reply, "write config");
