@@ -6,9 +6,9 @@ import numpy as np
 mqttc = paho.Client()
 
 # time parameter
-t = np.arange(0,10,0.1) # time vector; create Fs samples between 0 and 10 sec.
-y1k = np.arange(0,10,0.1) # acc
-y2k = np.arange(0,10,0.1) # Num
+t = np.arange(0,10,1) # time vector; create Fs samples between 0 and 10 sec.
+xk = np.arange(0,10,1)
+y2k = np.arange(0,10,1) # Num
 
 # Settings for connection
 host = "localhost"
@@ -95,32 +95,46 @@ print(char.decode())
 print("start sending RPC")
 
 time.sleep(3)
+serdev = '/dev/ttyUSB0'
+s = serial.Serial(serdev, 9600)
+s.write("/getAcc/run\r".encode())
 
+serdev1 = '/dev/ttyACM0'
+s1 = serial.Serial(serdev1, 9600)
+    
+print('')
+time.sleep(3)
 
 # Record acc from PC
+y1k=[] #list
+
 for x in range(0,int(10)):
-    serdev = '/dev/ttyUSB0'
-    s = serial.Serial(serdev, 9600)
-    s.write("/getAcc/run\r".encode())
-    
-    serdev = '/dev/ttyACM0'
-    s = serial.Serial(serdev, 9600)
-    line=s.readline() # Read an echo string from K66F terminated with '\n'
+
+    line=s1.readline() # Read an echo string from K66F terminated with '\n' (to Remote)
+    print('')
+    line=s1.readline() # Read an echo string from K66F terminated with '\n' (RPC)
+    print(line)
     time.sleep(1)
 
     y1=line.decode().strip().split(",")[0]
+    y1k.append(y1)
     
     y2=line.decode().strip().split(",")[1]
     y2k[x] = float(y2)
+    print(xk[x])
 
-    mqttc.publish(topic, y1)
+    mqttc.publish(topic, y1k)
 
-    time.sleep(1)
+print('ALL y1 = ')
+print(y1k)
+print('ALL y2k = ')
 print(y2k)
+print('ALL x = ')
+print(x)
 
 # Num plot
 plt.figure()
-plt.plot(x, y2k)
+plt.plot(xk, y2k)
 plt.xlabel("timestamp")
 plt.ylabel("number")
 plt.title("# collected data plot")

@@ -35,7 +35,7 @@ void check_addr(char *xbee_reply, char *messenger);
 #define FXOS8700Q_WHOAMI_VAL 0xC7
 I2C i2c( PTD9,PTD8);
 int m_addr = FXOS8700CQ_SLAVE_ADDR1;
-int Num = 0;
+
 //FXO
 void FXOS8700CQ_readRegs(int addr, uint8_t * data, int len);
 void FXOS8700CQ_writeRegs(uint8_t * data, int len);
@@ -151,7 +151,8 @@ void getAcc(Arguments *in, Reply *out) {
    float t[3];
    float d[3];
    uint8_t res[6];
-   
+   int Num = 0;
+   while(1){
    FXOS8700CQ_readRegs(FXOS8700Q_OUT_X_MSB, res, 6);
 
    acc16 = (res[0] << 6) | (res[1] >> 2);
@@ -169,21 +170,20 @@ void getAcc(Arguments *in, Reply *out) {
       acc16 -= UINT14_MAX;
    t[2] = ((float)acc16) / 4096.0f;
    Num++;
-   pc.printf("%1.4f %1.4f %1.4f %d,%d\r\n", t[0], t[1], t[2], 1, Num);
-   wait(1);
-   /*
+   
    //Calculate degree
    float R = (float)sqrt((t[0]*t[0]) + (t[1]*t[1]) + (t[2]*t[2]));
    d[0] = abs(acos(t[0]/R));
    d[1] = abs(acos(t[1]/R));
    d[2] = abs(acos(t[2]/R));
    if ((abs(d[0]-1.5930)>=0.7854) || (abs(d[1]-1.5875)>=0.7854) || (abs(d[2]-0.2946)>=0.7854)){
-      printf("%1.4f %1.4f %1.4f %d,%d", t[0], t[1], t[2], 1, Num);   
+      printf("%1.4f %1.4f %1.4f %d,%d\r\n", t[0], t[1], t[2], 1, Num);   
    }
    else{
-      printf("%1.4f %1.4f %1.4f %d,%d", t[0], t[1], t[2], 0, Num);
-   }*/
-   
+      printf("%1.4f %1.4f %1.4f %d,%d\r\n", t[0], t[1], t[2], 0, Num);
+   }
+   wait(1);
+   }
 }
 
 void getAddr(Arguments *in, Reply *out) {
