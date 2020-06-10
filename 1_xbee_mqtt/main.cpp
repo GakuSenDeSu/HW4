@@ -99,6 +99,13 @@ void check_addr(char *xbee_reply, char *messenger){
 
 int main() {
    pc.baud(9600);
+   // Enable the FXOS8700Q
+   uint8_t data[2];
+   FXOS8700CQ_readRegs( FXOS8700Q_CTRL_REG1, &data[1], 1);
+   data[1] |= 0x01;
+   data[0] = FXOS8700Q_CTRL_REG1;
+   FXOS8700CQ_writeRegs(data, 2);
+
    char xbee_reply[4];
    xbee.baud(9600);
    xbee.printf("+++");
@@ -140,13 +147,6 @@ int main() {
 }
 
 void getAcc(Arguments *in, Reply *out) {
-   // Enable the FXOS8700Q
-   uint8_t data[2];
-   FXOS8700CQ_readRegs( FXOS8700Q_CTRL_REG1, &data[1], 1);
-   data[1] |= 0x01;
-   data[0] = FXOS8700Q_CTRL_REG1;
-   FXOS8700CQ_writeRegs(data, 2);
-
    int16_t acc16;
    float t[3];
    float d[3];
@@ -176,7 +176,7 @@ void getAcc(Arguments *in, Reply *out) {
    d[0] = abs(acos(t[0]/R));
    d[1] = abs(acos(t[1]/R));
    d[2] = abs(acos(t[2]/R));
-   if ((abs(d[0]-1.5930)>=0.7854) || (abs(d[1]-1.5875)>=0.7854) || (abs(d[2]-0.2946)>=0.7854)){
+   if ((abs(d[0]-1.69)>=0.7854) || (abs(d[1]-1.57)>=0.7854) || (abs(d[2]-0.11)>=0.7854)){
       printf("%1.4f %1.4f %1.4f %d,%d\r\n", t[0], t[1], t[2], 1, Num);   
    }
    else{

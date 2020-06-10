@@ -21,7 +21,7 @@ def on_connect(self, mosq, obj, rc):
     print("Connected rc: " + str(rc))
 
 def on_message(mosq, obj, msg):
-    print("[Received] Topic: " + msg.topic + ", Message: " + str(msg.payload) + "\n");
+    print("[Received] Topic: " + msg.topic + ", Message: " + str(msg.payload) + "\n")
 
 def on_subscribe(mosq, obj, mid, granted_qos):
     print("Subscribed OK")
@@ -150,7 +150,7 @@ for x in range(1,int(10)):
 print('ALL y1 = ')
 print(y1k)
 print('ALL y2kk = ')
-print(y2k)
+print(y2kk)
 print('ALL x = ')
 print(xk)
 
